@@ -13,13 +13,6 @@ class NoteListView(View):
         notes = Note.objects.all()
         return render(request, "notes/note_list.html", {"notes": notes})
 
-    def post(self, request):
-        form = NoteForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("note_list")
-        return render(request, "notes/note_form.html", {"form": form})
-
 
 class NoteDetailView(View):
     def get(self, request, id):

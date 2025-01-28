@@ -1,0 +1,37 @@
+{% extends "notes/base.html" %}
+
+{% block title %}
+    {% if note %}
+        Edit Note
+    {% else %}
+        Create Note
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="max-w-md mx-auto mt-10">
+        <h2 class="text-2xl font-bold mb-4">
+            {% if note %}
+                Edit Note
+            {% else %}
+                Create Note
+            {% endif %}
+        </h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+                {% if note %}
+                    Update Note
+                {% else %}
+                    Create Note
+                {% endif %}
+            </button>
+            {% if note %}
+                <a href="{% url 'note_detail' note.id %}" class="ml-4 text-gray-500">Cancel</a>
+            {% else %}
+                <a href="{% url 'note_list' %}" class="ml-4 text-gray-500">Cancel</a>
+            {% endif %}
+        </form>
+    </div>
+{% endblock %}
