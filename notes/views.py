@@ -27,17 +27,10 @@ class NoteDetailView(View):
         return render(request, "notes/note_detail.html", {"note": note})
 
     def post(self, request, id):
-        note = get_object_or_404(Note, id=id)
-
         if request.POST.get("_method") == "DELETE":
+            note = get_object_or_404(Note, id=id)
             note.delete()
             return redirect("note_list")
-
-        form = NoteForm(request.POST, instance=note)
-        if form.is_valid():
-            form.save()
-            return redirect("note_detail", id=note.id)
-        return render(request, "notes/note_form.html", {"form": form, "note": note})
 
 
 class NoteCreateView(View):
