@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Notes application{% endblock %}</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+</head>
+<body class="flex flex-col min-h-screen">
+{% block header %}
+    <header class="bg-gray-800 text-white p-4">
+        <h1>Notes application</h1>
+    </header>
+{% endblock %}
+
+<main class="flex-1 overflow-y-auto">
+    {% block content %}
+    {% endblock %}
+</main>
+
+{% block footer %}
+    <footer class="bg-gray-800 text-white p-4">
+        <p>&copy; 2025</p>
+    </footer>
+{% endblock %}
+</body>
+</html>
