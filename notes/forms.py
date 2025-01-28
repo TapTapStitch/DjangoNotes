@@ -6,12 +6,12 @@ from .models import Note
 
 class NoteForm(forms.ModelForm):
     title = forms.CharField(
-        max_length=100,
+        max_length=200,
         validators=[
             MinLengthValidator(
                 10, message="Title must be at least 10 characters long."
             ),
-            MaxLengthValidator(100, message="Title cannot exceed 100 characters."),
+            MaxLengthValidator(200, message="Title cannot exceed 100 characters."),
         ],
         widget=forms.TextInput(
             attrs={
