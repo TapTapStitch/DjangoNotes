@@ -13,13 +13,15 @@
         <p class="mb-4"><strong>Last Updated:</strong> {{ note.updated_at|date:"F j, Y, g:i a" }}</p>
 
         <div class="flex space-x-4">
-            <a href="{% url 'note_edit' note.id %}" class="text-blue-500 hover:underline">Edit</a>
-            <form action="{% url 'note_detail' note.id %}" method="post"
-                  onsubmit="return confirm('Are you sure you want to delete this note?');">
-                {% csrf_token %}
-                <input type="hidden" name="_method" value="DELETE">
-                <button type="submit" class="text-red-500 hover:underline">Delete</button>
-            </form>
+            {% if note.author == request.user %}
+                <a href="{% url 'note_edit' note.id %}" class="text-blue-500 hover:underline">Edit</a>
+                <form action="{% url 'note_delete' note.id %}" method="post"
+                      onsubmit="return confirm('Are you sure you want to delete this note?');">
+                    {% csrf_token %}
+                    <button type="submit" class="text-red-500 hover:underline">Delete</button>
+                </form>
+            {% endif %}
+
         </div>
 
         <a href="{% url 'note_list' %}" class="text-blue-500 hover:underline mt-4 inline-block">Back to List</a>

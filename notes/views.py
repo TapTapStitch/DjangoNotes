@@ -1,5 +1,12 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views import View
+from django.shortcuts import render, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
 from .models import Note
 from .forms import NoteForm
 
@@ -8,47 +15,46 @@ def root(request):
     return render(request, "notes/root.html")
 
 
-class NoteListView(View):
-    def get(self, request):
-        notes = Note.objects.all()
-        return render(request, "notes/note_list.html", {"notes": notes})
+class NoteListView(ListView):
+    model = Note
+    template_name = "notes/note_list.html"
+    context_object_name = "notes"
 
 
-class NoteDetailView(View):
-    def get(self, request, id):
-        note = get_object_or_404(Note, id=id)
-        return render(request, "notes/note_detail.html", {"note": note})
-
-    def post(self, request, id):
-        if request.POST.get("_method") == "DELETE":
-            note = get_object_or_404(Note, id=id)
-            note.delete()
-            return redirect("note_list")
+class NoteDetailView(DetailView):
+    model = Note
+    template_name = "notes/note_detail.html"
+    context_object_name = "note"
 
 
-class NoteCreateView(View):
-    def get(self, request):
-        form = NoteForm()
-        return render(request, "notes/note_form.html", {"form": form})
+class NoteCreateView(LoginRequiredMixin, CreateView):
+    model = Note
+    form_class = NoteForm
+    template_name = "notes/note_form.html"
+    success_url = "/notes/"
 
-    def post(self, request):
-        form = NoteForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("note_list")
-        return render(request, "notes/note_form.html", {"form": form})
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
 
-class NoteEditView(View):
-    def get(self, request, id):
-        note = get_object_or_404(Note, id=id)
-        form = NoteForm(instance=note)
-        return render(request, "notes/note_form.html", {"form": form, "note": note})
+class NoteEditView(LoginRequiredMixin, UpdateView):
+    model = Note
+    form_class = NoteForm
+    template_name = "notes/note_form.html"
+    context_object_name = "note"
+    success_url = "/notes/"
 
-    def post(self, request, id):
-        note = get_object_or_404(Note, id=id)
-        form = NoteForm(request.POST, instance=note)
-        if form.is_valid():
-            form.save()
-            return redirect("note_detail", id=note.id)
-        return render(request, "notes/note_form.html", {"form": form, "note": note})
+    def get_queryset(self):
+        return Note.objects.filter(author=self.request.user)
+
+
+class NoteDeleteView(LoginRequiredMixin, DeleteView):
+    model = Note
+    success_url = '/notes/'
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if obj.author != self.request.user:
+            redirect('/notes/')
+        return obj

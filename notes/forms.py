@@ -1,5 +1,4 @@
 from django import forms
-from django.contrib.auth.models import User
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from .models import Note
 
@@ -41,20 +40,6 @@ class NoteForm(forms.ModelForm):
         },
     )
 
-    author = forms.ModelChoiceField(
-        queryset=User.objects.all(),
-        widget=forms.Select(
-            attrs={
-                "class": "block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300",
-            }
-        ),
-        label="Author",
-        help_text="Select the author of the note.",
-        error_messages={
-            "required": "Please select an author.",
-        },
-    )
-
     class Meta:
         model = Note
-        fields = ["title", "content", "author"]
+        fields = ["title", "content"]
